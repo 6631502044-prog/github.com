@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MFU Dormitory 360 Viewer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      color: #1a2b4c;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      width: 58px;
+      height: 98px;
+      object-fit: contain;
+    }
+
+    .title {
+      font-size: 48px;
+      font-family: "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    .lang-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .lang-btn {
+      width: 70px;
+      height: 56px;
+      border: 1px solid #999;
+      background: #dfe7f2;
+      color: #1a2b4c;
+      font-size: 28px;
+      font-family: "Times New Roman", serif;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: #1a2b4c;
+      color: white;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 40px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.8);
+    }
+
+    .hero-text {
+      position: absolute;
+      left: 40px;
+      bottom: 30px;
+      color: white;
+      font-size: 52px;
+      line-height: 1.2;
+      font-family: "Times New Roman", serif;
+      max-width: 800px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .filter-btn {
+      border: none;
+      border-radius: 999px;
+      background: #e0edff;
+      color: #1a2b4c;
+      padding: 14px 28px;
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .filter-btn.active-filter {
+      background: #1a2b4c;
+      color: white;
+    }
+
+    .dorm-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    .dorm-card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .dorm-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .dorm-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-bottom {
+      background: #1a2b4c;
+      color: white;
+      padding: 16px;
+      min-height: 88px;
+    }
+
+    .card-title {
+      font-size: 22px;
+      margin: 0 0 8px;
+      font-weight: 600;
+    }
+
+    .card-meta {
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .hidden-card {
+      display: none !important;
+    }
+
+    #no-result-message {
+      display: none;
+      margin-top: 30px;
+      font-size: 28px;
+      color: #1a2b4c;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1200px) {
+      .dorm-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        height: 280px;
+      }
+
+      .hero-text {
+        font-size: 34px;
+        left: 24px;
+        bottom: 20px;
+      }
+
+      .title {
+        font-size: 36px;
+      }
+
+      .dorm-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .hero {
+        height: 220px;
+      }
+
+      .hero-text {
+        font-size: 26px;
+      }
+
+      .filter-btn {
+        font-size: 18px;
+        padding: 12px 20px;
+      }
+
+      .dorm-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="topbar">
+      <div class="brand">
+        <img class="logo" src="e:\yok\Project\public\logomfuv213927-w7aj-200w.png" alt="MFU Logo">
+        <div class="title">Home Page</div>
+      </div>
+
+      <div class="lang-group">
+        <button class="lang-btn active">TH</button>
+        <button class="lang-btn">EN</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dormitory">
+      <div class="hero-text">
+        สำรวจหอพักนักศึกษา มหาวิทยาลัยแม่ฟ้าหลวง แบบ 360°
+      </div>
+    </div>
+
+    <div class="filters">
+  <button class="filter-btn active-filter" data-group="all" data-value="all">หอพักทั้งหมด</button>
+  <button class="filter-btn" data-group="gender" data-value="male">หอพักชาย</button>
+  <button class="filter-btn" data-group="gender" data-value="female">หอพักหญิง</button>
+  <button class="filter-btn" data-group="room" data-value="fan">หอพักพัดลม</button>
+  <button class="filter-btn" data-group="room" data-value="air">หอพักปรับอากาศ</button>
+  <button class="filter-btn" data-group="capacity" data-value="2">จำนวน 2 คน</button>
+  <button class="filter-btn" data-group="capacity" data-value="3">จำนวน 3 คน</button>
+  <button class="filter-btn" data-group="capacity" data-value="4">จำนวน 4 คน</button>
+</div>
+
+    <div class="dorm-grid" id="dormGrid">
+      <div class="dorm-card" data-gender="male" data-room="fan" data-capacity="2">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 1">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 1</p>
+          <div class="card-meta">ชาย / พัดลม / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="air" data-capacity="3">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 2">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 2</p>
+          <div class="card-meta">หญิง / แอร์ / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="fan" data-capacity="4">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 3">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 3</p>
+          <div class="card-meta">หญิง / พัดลม / 4 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="air" data-capacity="2">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 4">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 4</p>
+          <div class="card-meta">ชาย / แอร์ / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="air" data-capacity="2">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 5">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 5</p>
+          <div class="card-meta">หญิง / แอร์ / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="fan" data-capacity="3">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 6">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 6</p>
+          <div class="card-meta">ชาย / พัดลม / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="air" data-capacity="4">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 7">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 7</p>
+          <div class="card-meta">หญิง / แอร์ / 4 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="air" data-capacity="3">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 8">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 8</p>
+          <div class="card-meta">ชาย / แอร์ / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="fan" data-capacity="2">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 9">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 9</p>
+          <div class="card-meta">หญิง / พัดลม / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="air" data-capacity="4">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 10">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 10</p>
+          <div class="card-meta">ชาย / แอร์ / 4 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="fan" data-capacity="3">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 11">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 11</p>
+          <div class="card-meta">หญิง / พัดลม / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="fan" data-capacity="4">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 12">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 12</p>
+          <div class="card-meta">ชาย / พัดลม / 4 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="air" data-capacity="2">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 13">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 13</p>
+          <div class="card-meta">หญิง / แอร์ / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="fan" data-capacity="3">
+        <img src="e:\yok\Project\public\rectangle43912-fi0of-400h.png" alt="Dorm 14">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 14</p>
+          <div class="card-meta">ชาย / พัดลม / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="air" data-capacity="4">
+        <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop" alt="Dorm 15">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 15</p>
+          <div class="card-meta">หญิง / แอร์ / 4 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="air" data-capacity="2">
+        <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop" alt="Dorm 16">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 16</p>
+          <div class="card-meta">ชาย / แอร์ / 2 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="female" data-room="fan" data-capacity="3">
+        <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop" alt="Dorm 17">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 17</p>
+          <div class="card-meta">หญิง / พัดลม / 3 คน</div>
+        </div>
+      </div>
+
+      <div class="dorm-card" data-gender="male" data-room="air" data-capacity="4">
+        <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop" alt="Dorm 18">
+        <div class="card-bottom">
+          <p class="card-title">Dorm 18</p>
+          <div class="card-meta">ชาย / แอร์ / 4 คน</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-result-message">ไม่พบหอพักที่ตรงกับเงื่อนไข</div>
+  </div>
+
+      <div id="no-result-message">ไม่พบหอพักที่ตรงกับเงื่อนไข</div>
+  </div>
+
+  <script>
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const dormCards = document.querySelectorAll('.dorm-card');
+    const noResultMessage = document.getElementById('no-result-message');
+
+    const selectedFilters = {
+      gender: null,
+      room: null,
+      capacity: null
+    };
+
+    function updateActiveButtons() {
+      filterButtons.forEach(button => {
+        const group = button.dataset.group;
+        const value = button.dataset.value;
+
+        button.classList.remove('active-filter');
+
+        if (group === 'all') {
+          if (
+            selectedFilters.gender === null &&
+            selectedFilters.room === null &&
+            selectedFilters.capacity === null
+          ) {
+            button.classList.add('active-filter');
+          }
+        } else {
+          if (selectedFilters[group] === value) {
+            button.classList.add('active-filter');
+          }
+        }
+      });
+    }
+
+    function filterDorms() {
+      let visibleCount = 0;
+
+      dormCards.forEach(card => {
+        const gender = card.dataset.gender;
+        const room = card.dataset.room;
+        const capacity = card.dataset.capacity;
+
+        const matchGender =
+          selectedFilters.gender === null || selectedFilters.gender === gender;
+
+        const matchRoom =
+          selectedFilters.room === null || selectedFilters.room === room;
+
+        const matchCapacity =
+          selectedFilters.capacity === null || selectedFilters.capacity === capacity;
+
+        if (matchGender && matchRoom && matchCapacity) {
+          card.classList.remove('hidden-card');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden-card');
+        }
+      });
+
+      if (visibleCount === 0) {
+        noResultMessage.style.display = 'block';
+      } else {
+        noResultMessage.style.display = 'none';
+      }
+    }
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const group = button.dataset.group;
+        const value = button.dataset.value;
+
+        if (group === 'all') {
+          selectedFilters.gender = null;
+          selectedFilters.room = null;
+          selectedFilters.capacity = null;
+        } else {
+          if (selectedFilters[group] === value) {
+            selectedFilters[group] = null;
+          } else {
+            selectedFilters[group] = value;
+          }
+        }
+
+        updateActiveButtons();
+        filterDorms();
+      });
+    });
+
+    updateActiveButtons();
+    filterDorms();
+  </script>
+</body>
+</html>
